@@ -1,0 +1,86 @@
+.main {
+  background-color: black;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Silkscreen", serif;
+  color: snow;
+}
+
+.top-bar {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  font-size: 16px;
+  position: absolute;
+  top: 0;
+}
+
+.top-bar .right-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container div {
+  padding: 4px;
+}
+
+.dice-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.dice-container div {
+  margin: 4px;
+}
+
+input {
+  font-family: "Silkscreen", serif;
+  font-size: 16px;
+  background-color: snow;
+  padding: 8px;
+}
+
+button {
+  padding: 8px;
+  font-family: "Silkscreen", serif;
+  font-size: 16px;
+  border-radius: 10%;
+  background-color: gold;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: goldenrod;
+}
+
+.hidden {
+  display: none;
+}
+
+a {
+  color: snow;
+}
+
+a:hover {
+  color: gold;
+}
+
+label {
+  font-size: 18px;
+}
+
+.result {
+  font-size: 36px;
+}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hi - Lo</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dice.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jacquarda+Bastarda+9&family=Outfit&family=Silkscreen:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body style="margin: 0">
+    <div class="main">
+      <!-- TOP BAR -->
+      <div class="top-bar hidden" id="top-bar">
+        <!-- HI - LO Help -->
+        <div>
+          <a
+            href="https://docs.google.com/document/d/10LAoD1zFn6Yo0dNY2WWPIfGUzYoCEL85Y01FLgKPkZ4/edit?tab=t.0#heading=h.d9odchpn1ff"
+            target="_blank"
+            >HI - LO</a
+          >
+        </div>
+        <!-- PLAYER INFO -->
+        <div class="right-panel">
+          <div>
+            <label>
+              HELLO,
+              <span id="player-name"></span>
+            </label>
+          </div>
+          <div>
+            <label>
+              current balance : $<span id="current-balance"></span>
+            </label>
+          </div>
+          <div>
+            <button onclick="onLogout()">LOGOUT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENTER NAME -->
+      <div class="container" id="enter-name">
+        <div>
+          <h1>
+            WELCOME to my
+            <a
+              href="https://docs.google.com/document/d/10LAoD1zFn6Yo0dNY2WWPIfGUzYoCEL85Y01FLgKPkZ4/edit?tab=t.0#heading=h.d9odchpn1ff"
+              target="_blank"
+              >HI - LO</a
+            >
+            GAME
+          </h1>
+        </div>
+        <div class="container">
+          <div><label>What's your name ?</label></div>
+          <div><input type="text" id="name-input" /></div>
+          <div><button onclick="onEnterName()">ENTER</button></div>
+        </div>
+      </div>
+
+      <!-- GAME -->
+      <div class="container hidden" id="game">
+        <div class="container">
+          <div class="dice-container">
+            <div class="dice" id="dice-1">?</div>
+            <div class="dice" id="dice-2">?</div>
+            <div class="dice" id="dice-3">?</div>
+          </div>
+          <!-- PLACE MONEY -->
+          <div class="container" id="place-money">
+            <div><label>Please place your bet</label></div>
+            <div><input type="number" id="bet-input" /></div>
+            <div><button onclick="onStartRolling()">ROLL DICE</button></div>
+          </div>
+          <!-- BETTING -->
+          <div class="container hidden" id="bet-options">
+            <div><label>Which option will you select to bet on ?</label></div>
+            <div class="dice-container">
+              <div>
+                <input type="radio" id="opt-high" name="bet-opt" value="High" />
+                <label for="opt-high"
+                  >High <span style="font-size: 12px">(>=12)</span></label
+                ><br />
+              </div>
+              <div>
+                <input type="radio" id="opt-mid" name="bet-opt" value="Mid" />
+                <label for="opt-mid"
+                  >Mid <span style="font-size: 12px">(=11)</span> </label
+                ><br />
+              </div>
+              <div>
+                <input type="radio" id="opt-low" name="bet-opt" value="Low" />
+                <label for="opt-low"
+                  >Low <span style="font-size: 12px">(<=10)</span></label
+                ><br />
+              </div>
+            </div>
+            <div><button onclick="onStopRolling()">ENTER</button></div>
+          </div>
+          <!-- RESULT -->
+          <div class="container hidden" id="bet-result">
+            <div id="result" class="result"></div>
+            <div id="prize"></div>
+            <div><button onclick="onBetAgain()">BET AGAIN</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function onEnterName() {
+        let name = document.getElementById("name-input").value;
+        if (name.trim() !== "") {
+          document.getElementById("player-name").textContent = name;
+          document.getElementById("current-balance").textContent = "0";
+          document.getElementById("enter-name").classList.add("hidden");
+          document.getElementById("game").classList.remove("hidden");
+          document.getElementById("place-money").classList.remove("hidden");
+          document.getElementById("top-bar").classList.remove("hidden");
+        }
+
+        document
+          .getElementById("name-input")
+          .addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+              onEnterName();
+            }
+          });
+      }
+
+      function onStartRolling() {
+        let betAmount = document.getElementById("bet-input").value;
+
+        if (betAmount) {
+          // Start the dice rolling animation
+          interval = setInterval(animateDiceRoll, 1);
+          document.getElementById("place-money").classList.add("hidden");
+          document.getElementById("bet-options").classList.remove("hidden");
+        }
+      }
+
+      function onStopRolling() {
+        var val = "";
+
+        // Get all radio buttons with name 'bet-opt'
+        const radios = document.getElementsByName("bet-opt");
+        // Loop through the radio buttons to check which one is selected
+        for (const radio of radios) {
+          if (radio.checked) {
+            val = radio.value;
+            break;
+          }
+        }
+
+        if (val !== "") {
+          clearInterval(interval);
+          // Generate random numbers between 1 and 6 for each die
+          const dice1 = getRandomDiceValue();
+          const dice2 = getRandomDiceValue();
+          const dice3 = getRandomDiceValue();
+
+          calculateReward(val, dice1 + dice2 + dice3);
+
+          // Update dice display
+          document.getElementById("dice-1").textContent = dice1;
+          document.getElementById("dice-2").textContent = dice2;
+          document.getElementById("dice-3").textContent = dice3;
+
+          document.getElementById("bet-options").classList.add("hidden");
+          document.getElementById("bet-result").classList.remove("hidden");
+        }
+      }
+
+      function getRandomDiceValue() {
+        return Math.floor(Math.random() * 6) + 1;
+      }
+
+      function animateDiceRoll() {
+        const diceElements = document.querySelectorAll(".dice");
+
+        diceElements.forEach((dice) => {
+          dice.textContent = getRandomDiceValue();
+        });
+      }
+
+      function calculateReward(val, diceVal) {
+        const bettingAmount = document.getElementById("bet-input").value;
+        const currentBalance = Number(
+          document.getElementById("current-balance").textContent
+        );
+        if (
+          (val === "High" && diceVal >= 12) ||
+          (val === "Low" && diceVal <= 10)
+        ) {
+          document.getElementById("result").textContent = "YOU WIN x2 !";
+          document.getElementById("prize").textContent =
+            "$" + (bettingAmount * 2).toString();
+          document.getElementById("current-balance").textContent =
+            currentBalance + bettingAmount * 2;
+        } else if (val === "Mid" && diceVal === 11) {
+          document.getElementById("result").textContent = "JACKPOT x5 !!!";
+          document.getElementById("prize").textContent =
+            "$" + (bettingAmount * 5).toString();
+          document.getElementById("current-balance").textContent =
+            currentBalance + bettingAmount * 5;
+        } else {
+          document.getElementById("result").textContent =
+            "Better luck on your next bet !";
+          document.getElementById("prize").textContent = null;
+          document.getElementById("current-balance").textContent =
+            currentBalance - bettingAmount;
+        }
+      }
+
+      function resetGame() {
+        document.getElementById("bet-input").value = null;
+
+        const radios = document.getElementsByName("bet-opt");
+        // Loop through the radio buttons to check which one is selected
+        for (const radio of radios) {
+          radio.checked = null;
+        }
+
+        document.getElementById("bet-options").classList.add("hidden");
+        document.getElementById("bet-result").classList.add("hidden");
+
+        document.getElementById("dice-1").textContent = "?";
+        document.getElementById("dice-2").textContent = "?";
+        document.getElementById("dice-3").textContent = "?";
+      }
+
+      function resetName() {
+        document.getElementById("name-input").value = null;
+        document.getElementById("player-name").textContent = null;
+        document.getElementById("current-balance").textContent = null;
+      }
+
+      function onBetAgain() {
+        resetGame();
+        document.getElementById("place-money").classList.remove("hidden");
+      }
+
+      function onLogout() {
+        resetName();
+        resetGame();
+        document.getElementById("game").classList.add("hidden");
+        document.getElementById("top-bar").classList.add("hidden");
+
+        document.getElementById("enter-name").classList.remove("hidden");
+      }
+    </script>
+  </body>
+</html>
