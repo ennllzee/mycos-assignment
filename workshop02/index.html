@@ -59,7 +59,8 @@
         </div>
         <div class="container">
           <div><label>What's your name ?</label></div>
-          <div><input type="text" id="name-input" /></div>
+          <div><input type="text" id="name-input" placeholder="Your Name" style="text-align: center;"/></div>
+          <div class="error-message" id="name-input-error"></div>
           <div><button onclick="onEnterName()">ENTER</button></div>
         </div>
       </div>
@@ -75,7 +76,11 @@
           <!-- PLACE MONEY -->
           <div class="container" id="place-money">
             <div><label>Please place your bet</label></div>
-            <div><input type="number" id="bet-input" /></div>
+            <div class="continer">
+              <label class="money-sign">$</label>
+              <input type="number" id="bet-input" class="money-input" placeholder="0"/>
+            </div>
+            <div class="error-message" id="bet-input-error"></div>
             <div><button onclick="onStartRolling()">ROLL DICE</button></div>
           </div>
           <!-- BETTING -->
@@ -101,6 +106,7 @@
                 ><br />
               </div>
             </div>
+            <div class="error-message" id="opt-input-error"></div>
             <div><button onclick="onStopRolling()">ENTER</button></div>
           </div>
           <!-- RESULT -->
@@ -116,6 +122,8 @@
     <script>
       function onEnterName() {
         let name = document.getElementById("name-input").value;
+        document.getElementById("name-input-error").textContent = null;
+
         if (name.trim() !== "") {
           document.getElementById("player-name").textContent = name;
           document.getElementById("current-balance").textContent = "0";
@@ -123,6 +131,9 @@
           document.getElementById("game").classList.remove("hidden");
           document.getElementById("place-money").classList.remove("hidden");
           document.getElementById("top-bar").classList.remove("hidden");
+        } else {
+          document.getElementById("name-input-error").textContent =
+            "Please enter your name before start the game";
         }
 
         document
@@ -136,17 +147,27 @@
 
       function onStartRolling() {
         let betAmount = document.getElementById("bet-input").value;
+        document.getElementById("bet-input-error").textContent = null;
 
         if (betAmount) {
-          // Start the dice rolling animation
-          interval = setInterval(animateDiceRoll, 1);
-          document.getElementById("place-money").classList.add("hidden");
-          document.getElementById("bet-options").classList.remove("hidden");
+          if (betAmount > 0) {
+            // Start the dice rolling animation
+            interval = setInterval(animateDiceRoll, 1);
+            document.getElementById("place-money").classList.add("hidden");
+            document.getElementById("bet-options").classList.remove("hidden");
+          } else {
+            document.getElementById("bet-input-error").textContent =
+              "You must place a bet greater than $0 to start the game.";
+          }
+        } else {
+          document.getElementById("bet-input-error").textContent =
+            "Please place bet to start the game";
         }
       }
 
       function onStopRolling() {
         var val = "";
+        document.getElementById("bet-input-error").textContent = null;
 
         // Get all radio buttons with name 'bet-opt'
         const radios = document.getElementsByName("bet-opt");
@@ -174,6 +195,9 @@
 
           document.getElementById("bet-options").classList.add("hidden");
           document.getElementById("bet-result").classList.remove("hidden");
+        } else {
+          document.getElementById("opt-input-error").textContent =
+            "Please select 1 bet option";
         }
       }
 
@@ -220,6 +244,8 @@
 
       function resetGame() {
         document.getElementById("bet-input").value = null;
+        document.getElementById("bet-input-error").textContent = null;
+        document.getElementById("opt-input-error").textContent = null;
 
         const radios = document.getElementsByName("bet-opt");
         // Loop through the radio buttons to check which one is selected
